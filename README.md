@@ -12,8 +12,19 @@ A script in Python that loads strings to Elasticsearch Docker container and then
 
 ### Install and start the Elasticsearch Docker container
 
+Start container without memory limit:
+
 ```bash
 docker run --restart=always -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" elasticsearch:7.13.4
+```
+
+Heap size for elastic search should be half of the container memory limit, source: https://www.elastic.co/guide/en/elasticsearch/guide/current/heap-sizing.html
+Swap should be disabled for better performance.
+
+Here swap is disabled, memory limit is set to 2g, and minimum and maximum heap size is set to 1g (resize should be prevented for better performance).
+
+```bash
+docker run --restart=always -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" --memory="2g" --memory-swap="2g" -e "ES_JAVA_OPTS=-Xms1g -Xmx1g" elasticsearch:7.13.4
 ```
 
 ### Start Elasticsearch if it was stopped
